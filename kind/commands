@@ -1,0 +1,53 @@
+Title: Creating cluster(kind) and pod(kubectl) with Kubernetes
+
+Pre-requisite: kind and kubernetes already installed.
+https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries
+https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux
+
+# create cluster and nodes
+kind create cluster --config kind-cluster.yaml --name giropops 
+
+# create the pod based on yaml file provided
+kubectl apply -f pod.yaml
+
+# access the pod
+kubectl exec -it giropops -- bash
+
+# after access the pod execute the command to check nginx
+curl localhost
+
+# expose nginx service
+kubectl expose pods giropops --type NodePort
+
+# check what node nginx service is running(see NODE column)
+kubectl get pods -o wide
+
+# check the column INTERNAL-IP from node
+kubectl get nodes -o wide
+
+-----------------------------------------------------------
+
+Extra commands
+# delete cluster
+kind delete cluster --name giropops
+
+# list all pods from namespace
+kubectl get pods -n kube-system 
+
+# list all pods from namespace(detailed view)
+kubectl get pods -n kube-system -o wide 
+
+# create pod based on nginx
+kubectl run --image nginx --port 80 giropops 
+
+# access the pod
+kubectl exec -it giropops -- bash
+
+# shortname to execute commands from kubectl
+alias k=kubectl 
+k get pods -A
+
+# generate yaml file based on command output(it does not create the pod)
+kubectl run --image nginx --port 80 giropops dry-run=client -o yaml > pod.yaml 
+
+
